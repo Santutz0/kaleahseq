@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Kalea: de la compra a la mesa, con cuatro normas</title>
+<style>
+:root{--bg:#FFF4EE;--panel:#FFFFFF;--ink:#3A0D10;--ink2:#6E3F41;--ink3:#86595A;--line:#EACBC0;--line2:#D6A99B;--accent:#C4283A;--lime:#E6F59A;
+--c90:#96650A;--c26:#1D6F82;--c45:#C4283A;--c14:#3F7A20}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15.5px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+#app{height:100vh;display:flex;flex-direction:column}
+header.top{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:12px 18px 6px}
+header.top h1{margin:0;font:900 24px/1.1 "Arial Black",Impact,system-ui,sans-serif;color:var(--accent)}
+header.top p{margin:2px 0 0;color:var(--ink2);font-size:14px}
+.btn{border:1.5px solid var(--line2);background:var(--panel);border-radius:10px;padding:8px 13px;font-weight:600;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn[disabled]{opacity:.35;cursor:default}
+.norms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:6px 18px 10px}
+.norm{text-align:left;border:1.5px solid var(--line2);border-left:6px solid var(--nc);background:var(--panel);border-radius:10px;padding:7px 10px;cursor:pointer;line-height:1.3}
+.norm b{display:block;font-size:14.5px;color:var(--nc)}
+.norm span{font-size:13px;color:var(--ink2)}
+.norm[aria-pressed="true"]{background:var(--nc);border-color:var(--nc)}
+.norm[aria-pressed="true"] b,.norm[aria-pressed="true"] span{color:#fff}
+main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,450px);gap:0}
+#mapWrap{min-height:0;padding:0 10px 10px 18px;display:flex;align-items:center}
+#map{width:100%;height:auto;max-height:100%}
+#panel{min-height:0;overflow:auto;background:var(--panel);border-left:1px dashed var(--line2);padding:0 24px 40px}
+.tabs{position:sticky;top:0;background:var(--panel);display:flex;gap:6px;padding:14px 0 10px;border-bottom:1px solid var(--line);margin-bottom:14px;z-index:2}
+.tabs button{border:1.5px solid var(--line2);background:transparent;border-radius:999px;padding:5px 14px;font-weight:600;font-size:14px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.step{font-size:13px;font-weight:700;color:var(--ink3);margin:0 0 4px}
+h2.pt{margin:0 0 12px;font:900 25px/1.1 "Arial Black",Impact,system-ui,sans-serif}
+h3{margin:16px 0 4px;font-size:13.5px;color:var(--ink2)}
+ul,ol{margin:0;padding-left:20px}
+li{margin-bottom:4px}
+.falta{border-left:4px solid var(--accent);padding:2px 0 2px 12px;margin:0}
+.sol{background:var(--lime);border-radius:16px;padding:14px 16px 12px;margin-top:18px}
+.sol h3{margin:0 0 6px;font-size:16px;color:var(--ink)}
+.sol .lab{display:block;font-size:12.5px;font-weight:700;color:var(--ink2);margin-bottom:2px}
+.fmt{margin-top:10px;background:rgba(255,255,255,.7);border-radius:12px;padding:8px 10px}
+.fh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;font-size:14px}
+.cp{border:1.5px solid var(--ink);background:var(--ink);color:#fff;border-radius:8px;padding:3px 10px;font-size:12.5px;font-weight:600;cursor:pointer}
+.fields{display:flex;flex-wrap:wrap;gap:4px}
+.fields span{border:1px solid var(--line2);background:#fff;border-radius:6px;padding:1px 7px;font-size:12.5px}
+.ind{margin:10px 0 0;font-weight:600}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{font-size:12.5px;border:1.5px solid var(--tc);color:var(--tc);border-radius:999px;padding:3px 10px;line-height:1.3;background:#fff}
+.tag b{font-weight:700}
+.tag.s90{--tc:var(--c90)}.tag.s26{--tc:var(--c26)}.tag.s45{--tc:var(--c45)}.tag.s14{--tc:var(--c14)}
+body[data-f="9001"] .tag:not(.s90),body[data-f="2674"] .tag:not(.s26),body[data-f="45001"] .tag:not(.s45),body[data-f="14001"] .tag:not(.s14){opacity:.3}
+.nav{display:flex;justify-content:space-between;gap:8px;margin-top:20px;padding-top:14px;border-top:1px dashed var(--line2)}
+.nav .btn{flex:1;text-align:left}
+.nav .btn.nx{text-align:right}
+.nav small{display:block;font-weight:400;color:var(--ink3);font-size:12.5px}
+.nav .pri small{color:#fff}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0}
+th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:6px 6px}
+th{font-size:12.5px;color:var(--ink2)}
+td.n{font-weight:700}
+.ojo li{margin-bottom:8px}
+a{color:var(--accent);font-weight:600;word-break:break-word}
+.hint{font-size:13px;color:var(--ink3)}
+
+/* mapa */
+.zone{fill:var(--zc);fill-opacity:.08;stroke:var(--zc);stroke-opacity:.6;stroke-width:1.5}
+.zl{font:700 15px system-ui,sans-serif;fill:var(--ink2)}
+.edge{fill:none;stroke:#8B4A4C;stroke-width:1.6;opacity:.4}
+.edge.link{stroke-dasharray:2 5}
+.edge.back{stroke-dasharray:7 5}
+.edge.on{stroke:var(--accent);stroke-width:3;opacity:1}
+.el{font:italic 13px system-ui,sans-serif;fill:var(--ink3)}
+.card{cursor:pointer;outline:none}
+.card rect{fill:#fff;stroke:var(--ink);stroke-width:1.6}
+.card.dec rect{stroke-dasharray:6 4}
+.card text.t{font:700 20px system-ui,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.card circle{fill:var(--ink)}
+.card text.nb{font:700 13px system-ui,sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central}
+.card:hover rect,.card:focus-visible rect{stroke:var(--accent);stroke-width:2.6}
+.card.cur rect{stroke:var(--accent);stroke-width:4;fill:var(--lime)}
+.card.cur circle{fill:var(--accent)}
+.card.dim{opacity:.22}
+#printAll{display:none}
+#toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,16px);background:var(--ink);color:#fff;padding:9px 14px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:9}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:860px){
+  html,body{height:auto}
+  #app{height:auto;display:block}
+  .norms{grid-template-columns:1fr 1fr}
+  main{display:block}
+  #mapWrap{padding:0 10px 8px}
+  #panel{border-left:0;border-top:1px dashed var(--line2);padding:0 16px 40px;overflow:visible}
+  header.top{flex-direction:column;align-items:flex-start;gap:8px}
+}
+@media print{
+  @page{margin:14mm}
+  body{background:#fff;font-size:11pt}
+  #app,#toast{display:none!important}
+  #printAll{display:block}
+  #printAll h1{font:900 22pt/1.1 "Arial Black",Impact,sans-serif;color:var(--accent);margin:0 0 4pt}
+  #printAll .node{break-inside:avoid;page-break-inside:avoid;margin:0 0 14pt;padding-bottom:8pt;border-bottom:1px solid var(--line2)}
+  #printAll .sol{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printAll .nav{display:none}
+  .tag{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  a{color:#000;text-decoration:underline}
+}
+</style>
+</head>
+<body data-f="all">
+<div id="app">
+  <header class="top">
+    <div>
+      <h1>Kalea: de la compra a la mesa</h1>
+      <p>Cuatro normas en una sola operación. Toca un paso del mapa o usa Siguiente. Cada paso trae una solución lista para usar.</p>
+    </div>
+    <button class="btn" id="bPrint" title="Abre el diálogo de impresión: elige «Guardar como PDF»">Imprimir o guardar como PDF</button>
+  </header>
+  <div class="norms" id="normbar" role="group" aria-label="Resaltar una norma en el mapa"></div>
+  <main>
+    <section id="mapWrap" aria-label="Mapa del recorrido"><svg id="map" viewBox="0 0 800 440" role="group" aria-label="Mapa: nueve pasos de la compra a la mesa"></svg></section>
+    <aside id="panel" aria-live="polite">
+      <div class="tabs" role="tablist"><button role="tab" id="tRec" aria-selected="true">Recorrido</button><button role="tab" id="tRes" aria-selected="false">Resumen y datos a revisar</button></div>
+      <div id="view"></div>
+    </aside>
+  </main>
+</div>
+<div id="printAll"></div>
+<div id="toast" role="status"></div>
+
+<script>
+const SYS={
+ '9001':{n:'NTC ISO 9001',k:'s90',c:'var(--c90)',d:'Lo que Kalea ofrece al cliente y cómo lo demuestra'},
+ '2674':{n:'Res. 2674 de 2013',k:'s26',c:'var(--c26)',d:'El piso legal que no puede incumplir'},
+ '45001':{n:'NTC ISO 45001',k:'s45',c:'var(--c45)',d:'La protección de quienes trabajan'},
+ '14001':{n:'NTC ISO 14001',k:'s14',c:'var(--c14)',d:'El efecto de la operación en el entorno'}
+};
+const ZONES=[
+ {n:'Entrada',x:6,c:'#8A5A44'},{n:'Cocina',x:206,c:'#DA3443'},{n:'Salón',x:406,c:'#B07A00'},{n:'Atrás y gestión',x:606,c:'#1D7386'}
+];
+const NODES=[
+ {id:'compras',x:100,y:112,label:'Compras',title:'Compras y proveedores',zone:'Entrada',
+  tiene:['La Chef Natalia decide directamente con qué proveedores trabaja, para asegurar frescura y materia prima de calidad.','Los proveedores envían cestas retornables.'],
+  falta:'Ese rigor depende de la Chef y no queda escrito. Además, el desabastecimiento de producto fresco es un riesgo propio de Kalea.',
+  sol:{t:'Proveedores aprobados, con plan B',
+   pasos:['Lista de proveedores aprobados: producto, contacto y requisitos mínimos (frescura, entrega, documentos sanitarios).','Evaluación semestral de 1 a 5 en frescura, puntualidad, cumplimiento y precio. Promedio menor a 3: se busca reemplazo.','Segundo proveedor aprobado para cada producto fresco crítico, para que un faltante no frene la carta.'],
+   fmts:[{n:'Evaluación de proveedores',c:['Proveedor','Producto','Frescura (1-5)','Puntualidad (1-5)','Cumplimiento (1-5)','Precio (1-5)','Promedio','Decisión','Fecha']}],
+   ind:'Meta propuesta: 100 % de los productos frescos críticos con dos proveedores aprobados.'},
+  normas:[['9001','§8.4','proveedores externos'],['2674','art. 16','materias primas e insumos'],['14001','§8.1','ciclo de vida, cestas retornables']],
+  quien:'Chef Natalia',plazo:'30 días',res:'2 proveedores en el 100 % de frescos críticos'},
+ {id:'recibo',x:100,y:232,label:'Recibo',title:'Recibo y almacenamiento',zone:'Entrada',
+  tiene:['Sistema PEPS (FIFO) y compras según la rotación.','Neveras y congeladores con termómetro, y mantenimiento de neveras cada 4 a 5 meses.'],
+  falta:'No hay registro de temperaturas: si la cadena de frío fluctúa, nadie puede demostrarlo.',
+  sol:{t:'Bitácora de frío y registro de recibo',
+   pasos:['Anotar la temperatura de cada nevera al abrir y al cerrar. La norma fija refrigeración a 4 ± 2 °C y congelación a −18 °C o menos.','Fuera de rango: mover el producto, avisar a la Chef, anotar la acción y llamar a mantenimiento si pasa dos días seguidos.','Al recibir, anotar temperatura, vencimiento y estado. Lo rechazado se devuelve al proveedor con constancia.','Verificar los termómetros cada seis meses con agua con hielo (deben marcar cerca de 0 °C): la norma pide calibrar los instrumentos de medición.'],
+   fmts:[{n:'Bitácora de frío',c:['Fecha','Nevera o congelador','Hora','Temperatura (°C)','¿En rango?','Acción tomada','Firma']},{n:'Registro de recibo',c:['Fecha','Proveedor','Producto','Temperatura (°C)','Vencimiento o lote','Estado','¿Aceptado?','Firma']}],
+   ind:'Meta propuesta: 2 lecturas diarias en el 100 % de neveras y congeladores.'},
+  normas:[['2674','arts. 18 y 28','temperaturas y almacenamiento'],['2674','art. 25','calibración de instrumentos'],['9001','§7.1.5','seguimiento y medición'],['9001','§8.5.2','trazabilidad']],
+  quien:'Cocina',plazo:'7 días',res:'2 lecturas diarias por nevera'},
+ {id:'cocina',x:300,y:112,label:'Cocina',title:'Cocina: elaboración propia',zone:'Cocina',
+  tiene:['Mucha elaboración propia: lechona, masa madre, mermelada, suero costeño y crumble.','Todo el equipo se capacita en los platos: el chef con más rigor y el resto a nivel sensorial, para poder recomendarlos.'],
+  falta:'Sin fichas técnicas, el saber se pierde con la rotación y no hay estandarización: a veces se gasta de más.',
+  sol:{t:'Ficha técnica de una página, empezando por cinco',
+   pasos:['Primero las 5 elaboraciones propias; después, los platos más vendidos.','Validar cada ficha: otra cocinera prepara el plato siguiendo solo la hoja. Si el resultado cambia, se corrige la ficha.','Una copia impresa en cocina y otra digital, con versión y fecha en cada hoja.','Si contratan al ingeniero de alimentos, que sea el responsable de mantenerlas al día.'],
+   fmts:[{n:'Ficha técnica',c:['Nombre','Versión y fecha','Ingredientes y gramos','Rendimiento (porciones)','Paso a paso','Tiempos y °C críticos','Alérgenos','Vida útil y rotulado','Foto','Costo por porción']}],
+   ind:'Meta propuesta: 5 de 5 elaboraciones propias con ficha validada en 60 días.'},
+  normas:[['9001','§7.1.6','conocimientos de la organización'],['9001','§8.5.1','producción controlada'],['14001','§6.1.2','desperdicio de alimentos'],['45001','§7.2','competencia']],
+  quien:'Chef y cocineras',plazo:'60 días',res:'5 de 5 fichas validadas'},
+ {id:'calor',x:300,y:232,label:'Calor y gas',title:'Calor, gas y espacio reducido',zone:'Cocina',
+  tiene:['Plan de saneamiento básico: limpieza y desinfección, residuos sólidos, control de plagas y agua potable.','Mantenimiento externo de equipos cada 3 a 4 meses, con evidencia fotográfica, y revisión de llamas y mangueras.','Distribución óptima para mantener el flujo del proceso y evitar contaminación cruzada.'],
+  falta:'Las cocineras no usan la casaca porque el espacio reducido les da mucho calor. La presentación ya propone mantener el extractor siempre encendido.',
+  sol:{t:'Quitar el calor de la fuente y hacer cómoda la casaca',
+   pasos:['Extractor siempre encendido y con aire de reposición (puerta o rejilla): sin entrada de aire extrae, pero no refresca. Confirmarlo con el técnico de ventilación.','Casaca ligera (algodón fino, manga corta o arremangable) que cumpla la norma: color claro, cierres o broches en lugar de botones y sin bolsillos sobre la cintura.','Medir antes de opinar: temperatura y humedad en la línea, dos veces por turno durante dos semanas. Con esos datos se acuerdan pausas de hidratación.','Pasillos libres de canastillas: la distribución es buena para el flujo, pero estrecha para evacuar. Tras cada simulacro, una evaluación escrita.'],
+   fmts:[{n:'Registro de calor en la línea',c:['Fecha','Turno','Hora','Temperatura ambiente (°C)','Humedad (%)','Extractor encendido (sí/no)','Casaca usada (sí/no)','Observación']}],
+   ind:'Meta propuesta: casaca usada por el 100 % del personal de cocina.'},
+  normas:[['2674','art. 14','vestimenta de trabajo'],['2674','art. 7','ventilación que remueva el calor'],['45001','§8.1.2','controlar en la fuente antes que el EPP'],['45001','§8.2','emergencias y simulacros'],['9001','§7.1.4','ambiente de trabajo'],['14001','§6.1.2','gas y energía']],
+  quien:'Chef y administración',plazo:'30 días',res:'Casaca usada por el 100 % del personal'},
+ {id:'carta',x:300,y:352,label:'Carta nueva',title:'Carta nueva: evaluar antes de cambiar',zone:'Cocina',dec:1,
+  tiene:['Los cambios de carta se gestionan con formatos operativos.'],
+  falta:'No hay evaluación previa de riesgos: se cambia y después se ve qué problemas trae.',
+  sol:{t:'Seis preguntas antes de lanzar un plato',
+   pasos:['¿Tiene ficha técnica y diagrama de flujo? ¿Los alérgenos están declarados en la carta?','¿Los proveedores del insumo nuevo están aprobados y hay abastecimiento?','¿Exige equipo nuevo o genera más calor, gas o carga de trabajo?','¿Cocina y sala fueron capacitadas, incluida la cata sensorial? ¿Hubo prueba piloto y se midieron los residuos nuevos?','Decide la Chef: aprobado, ajustar o rechazado. Con dos respuestas «no», no sale a la carta.'],
+   fmts:[{n:'Lista previa a un plato nuevo',c:['Plato','Fecha','¿Ficha y flujo?','¿Alérgenos declarados?','¿Proveedor aprobado?','¿Equipo, calor o gas nuevos?','¿Personal capacitado?','¿Prueba piloto y residuos?','Decisión','Firma']}],
+   ind:'Meta propuesta: 100 % de los platos nuevos con la lista firmada.'},
+  normas:[['9001','§6.3','planificación de los cambios'],['45001','§8.1.3','gestión del cambio'],['2674','art. 16','ficha técnica del insumo nuevo']],
+  quien:'Chef Natalia',plazo:'15 días',res:'100 % de platos nuevos con lista'},
+ {id:'servicio',x:500,y:112,label:'Servicio',title:'Servicio y menú',zone:'Salón',
+  tiene:['Menú claro: precios con impuestos incluidos, propina voluntaria según la SIC, tiempos de preparación y rótulos de alérgenos.','Cada plato y bebida se verifica antes de llegar a la mesa.','Se maneja la información de alergias del cliente y los vehículos del parqueadero.'],
+  falta:'La presentación no señala una no conformidad aquí. El reto es que lo que ya funciona no dependa de quién esté de turno.',
+  sol:{t:'Lista en el pase y alergias marcadas',
+   pasos:['Lista de 4 chequeos pegada en el pase: plato correcto para la mesa, temperatura, presentación y alérgenos de la comanda.','Alergias anotadas en la comanda con marca visible y confirmadas en voz alta con la cocina.','Tiquete del parqueadero con placa y hora de entrada, para dejar constancia de lo que se recibe del cliente.'],
+   fmts:[{n:'Registro de alergias',c:['Fecha','Mesa','Alérgeno','Plato','Confirmado con cocina (sí/no)','Servido por']}],
+   ind:'Meta propuesta: 0 platos servidos con un alérgeno no confirmado.'},
+  normas:[['9001','§8.6','liberación antes de entregar'],['9001','§8.5.3','propiedad del cliente'],['9001','§8.2.1','información al cliente'],['2674','art. 35','servido con utensilios y protegido']],
+  quien:'Sala y cocina',plazo:'15 días',res:'0 platos con alérgeno no confirmado'},
+ {id:'clientes',x:500,y:232,label:'Clientes',title:'Quejas, reservas y satisfacción',zone:'Salón',
+  tiene:['Reservas y PQRS por dos canales: WhatsApp e Instagram.'],
+  falta:'No se mide la satisfacción, y las devoluciones o quejas no se registran: la reunión semanal no tiene datos con qué trabajar.',
+  sol:{t:'Bitácora de quejas y encuesta de tres preguntas',
+   pasos:['Toda queja o devolución, de mesa o de redes, se anota en una hoja: qué pasó, causa, acción y si quedó cerrada.','En la reunión semanal que ya existe: 10 minutos para las 3 causas más repetidas.','Encuesta de 3 preguntas (comida, servicio, ¿volvería?, de 1 a 5) con código QR en la cuenta. Revisar los comentarios de Instagram cada semana.','Responder por WhatsApp o Instagram dentro de 24 horas.'],
+   fmts:[{n:'Bitácora de quejas',c:['Fecha','Canal (mesa, WhatsApp, Instagram)','Plato o bebida','Qué pasó','Causa','Acción','Responsable','¿Cerrada?','Fecha de cierre']}],
+   ind:'Metas propuestas: 90 % de quejas cerradas en 48 horas y satisfacción promedio de 4,5 o más.'},
+  normas:[['9001','§9.1.2','satisfacción del cliente'],['9001','§8.7','salidas no conformes'],['9001','§10.2','acción correctiva'],['2674','art. 36','responsabilidad por la inocuidad']],
+  quien:'Sala',plazo:'30 días',res:'90 % de quejas cerradas en 48 h; satisfacción de 4,5 o más'},
+ {id:'residuos',x:700,y:232,label:'Residuos',title:'Residuos y entorno',zone:'Atrás y gestión',
+  tiene:['Separación en origen con el código de colores (blanco, negro, verde); un gestor autorizado recoge los orgánicos.','Aceite usado en recipientes cerrados y rotulados, con acta por entrega.','Recortes en caldos, empaques compostables o reciclables, químicos con ficha de seguridad y dosificadores.'],
+  falta:'No hay certificado de la disposición de los orgánicos. Y el control de ruido se limita a cuidar el volumen: no hay una medición que lo respalde.',
+  sol:{t:'Acta por recolección, pesaje de orgánicos y ruido medido',
+   pasos:['Pedir al gestor un acta por cada recolección de orgánicos (fecha, kilos, gestor) y archivarla junto a las del aceite.','Pesar los orgánicos una vez por semana: sin ese dato no se puede probar que las fichas técnicas reducen el desperdicio.','Identificar el límite de ruido que aplica a la zona del local y hacer una medición de referencia en su límite, con el extractor encendido.','Revisar la frecuencia de limpieza de campana y extractor (hoy cada 5 a 6 meses), ahora que el extractor trabajará más horas.'],
+   fmts:[{n:'Registro de residuos',c:['Fecha','Tipo (orgánicos, aceite usado, aprovechables)','Cantidad (kg o litros)','Gestor','N.° de acta o certificado','Observación']}],
+   ind:'Metas propuestas: 100 % de las recolecciones con acta y 10 % menos de orgánicos en 3 meses.'},
+  normas:[['14001','§6.1.2','aspectos ambientales'],['14001','§6.1.3','requisitos legales'],['14001','§8.1','control operacional'],['2674','art. 26','desechos sólidos'],['45001','§8.1.2','controles de peligros químicos']],
+  quien:'Administración',plazo:'30 días',res:'Acta en el 100 % de recolecciones; 10 % menos de orgánicos'},
+ {id:'control',x:700,y:112,label:'Control',title:'Control y mejora',zone:'Atrás y gestión',
+  tiene:['La Chef Natalia verifica de forma constante los procesos y toda la operación, y hay acciones correctivas.','Inducción, capacitaciones cada 2 a 3 meses con evaluación y lista de asistencia, y carnés de manipulación vigentes.'],
+  falta:'De la auditoría no queda registro, no hay política ni alcance documentados, y los objetivos son intenciones (más capacitaciones, un ingeniero de alimentos), no metas medibles.',
+  sol:{t:'Un tablero de seis indicadores y una auditoría cruzada',
+   pasos:['Política integrada de una página con cuatro compromisos (cliente, ley, personas y entorno), firmada por la gerencia.','Auditoría interna mensual de 15 puntos con los formatos de este recorrido, hecha por alguien distinto de quien opera el área: sala audita cocina y cocina audita sala. Queda un acta.','Revisión trimestral de 30 minutos con los seis indicadores y las acciones abiertas.','Lista maestra de formatos (nombre, versión, fecha, dónde se guarda) y conteo de horas de capacitación: la norma pide al menos 10 al año por manipulador.'],
+   fmts:[{n:'Auditoría mensual',c:['Fecha','Área','Punto verificado','¿Cumple?','Evidencia','Acción','Responsable','Plazo']},{n:'Tablero de indicadores',c:['Indicador','Meta','Valor del mes','Estado','Acción']}],
+   ind:'Los seis indicadores: neveras con registro, proveedores con plan B, fichas validadas, quejas cerradas en 48 h, satisfacción y kilos de orgánicos.'},
+  normas:[['9001','§5.2','política'],['9001','§9.2 y §9.3','auditoría y revisión'],['9001','§7.5','información documentada'],['45001','§9','evaluación del desempeño'],['14001','§9.1','seguimiento y medición'],['2674','art. 12','capacitación de 10 horas al año']],
+  quien:'Gerencia',plazo:'90 días',res:'6 indicadores al día'}
+];
+const IDX=Object.fromEntries(NODES.map((n,i)=>[n.id,i]));
+const EDGES=[['compras','recibo','flow'],['recibo','cocina','flow'],['cocina','servicio','flow'],['servicio','clientes','flow'],['clientes','residuos','flow'],['residuos','control','flow'],
+ ['cocina','calor','link'],['calor','carta','link'],['clientes','cocina','back']];
+const OJO=[
+ ['«Resolución 2671/2013»','La primera línea de la presentación dice 2671; el resto dice 2674/2013, que es la correcta (Ministerio de Salud). Conviene corregir la diapositiva.'],
+ ['Ruido de 90 dB','La presentación lo cita según la Res. 627/2006, pero ese valor no coincide con los límites de esa resolución para zonas comerciales, que son bastante menores. Verifíquenlo antes de exponer.'],
+ ['Extractor y ruido a la vez','Encender siempre el extractor resuelve el calor, pero sube el ruido y el consumo de energía (aspectos de la NTC ISO 14001). Las dos decisiones deben tomarse juntas.'],
+ ['La casaca no es un EPP','En el corte de ISO 45001 se contó como falta de EPP. La Res. 2674 (art. 14) la exige como vestimenta de higiene; el EPP contra quemaduras es otra cosa. Por eso la solución ataca el calor y el diseño de la casaca.'],
+ ['Carné de manipulación','La Res. 2674 no menciona el carné: exige certificación médica de aptitud, al menos una vez al año (art. 11), y capacitación continua de al menos 10 horas al año (art. 12). Los carnés vigentes ayudan, pero esos dos soportes son los que debe poder mostrar Kalea.'],
+ ['Edición de las normas','Usé la numeración de las ediciones 2015 de ISO 9001 e ISO 14001, y la 2018 de ISO 45001, que son las que cita la presentación. Ya existen ediciones 2026 de ISO 9001 e ISO 14001: confirmen con su docente cuál NTC aplica.']
+];
+const FUENTES=[
+ ['Resolución 2674 de 2013, texto completo','https://normas.cra.gov.co/gestor/docs/resolucion_minsaludps_2674_2013.htm'],
+ ['ISO 9001, ficha oficial','https://www.iso.org/es/norma/9001'],
+ ['ISO 14001, comunicado oficial de la edición 2026','https://www.iso.org/es/contents/news/2026/04/iso-14001-2026-published.html'],
+ ['ISO 45001, cláusulas 8.1 y 8.2','https://www.ecesis.net/ISO-45001/Operational-Planning-and-Control.aspx']
+];
+
+(function(){
+'use strict';
+const $=(s,r)=>(r||document).querySelector(s);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+let cur=0,filter='all',tab='rec';
+
+function tags(n){return '<div class="tags">'+n.normas.map(function(x){const s=SYS[x[0]];return '<span class="tag '+s.k+'" title="'+esc(s.n+' '+x[1]+': '+x[2])+'"><b>'+esc(s.n+' '+x[1])+'</b> '+esc(x[2])+'</span>';}).join('')+'</div>';}
+function fmts(n,i,print){
+  return n.sol.fmts.map(function(f,j){
+    return '<div class="fmt"><div class="fh"><b>Formato: '+esc(f.n)+'</b>'+(print?'':'<button class="cp" data-n="'+i+'" data-f="'+j+'">Copiar columnas</button>')+'</div><div class="fields">'+f.c.map(function(c){return '<span>'+esc(c)+'</span>';}).join('')+'</div></div>';
+  }).join('');
+}
+function nodeHTML(n,i,print){
+  let h='<p class="step">Paso '+(i+1)+' de '+NODES.length+', zona '+esc(n.zone)+'</p><h2 class="pt">'+esc(n.title)+'</h2>';
+  h+='<h3>Lo que Kalea ya hace</h3><ul>'+n.tiene.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>';
+  h+='<h3>Lo que falta</h3><p class="falta">'+esc(n.falta)+'</p>';
+  h+='<div class="sol"><h3>Solución: '+esc(n.sol.t)+'</h3><ol>'+n.sol.pasos.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ol>'+fmts(n,i,print)+'<p class="ind">'+esc(n.sol.ind)+'</p><span class="hint">Propuesto: '+esc(n.quien)+', en '+esc(n.plazo)+'.</span></div>';
+  h+=tags(n);
+  if(!print){
+    const p=NODES[(i+NODES.length-1)%NODES.length],q=NODES[(i+1)%NODES.length];
+    h+='<div class="nav"><button class="btn" data-go="'+((i+NODES.length-1)%NODES.length)+'"'+(i===0?' disabled':'')+'><small>Anterior</small>'+esc(p.label)+'</button><button class="btn pri nx" data-go="'+((i+1)%NODES.length)+'"><small>'+(i===NODES.length-1?'Vuelve a empezar':'Siguiente')+'</small>'+esc(q.label)+'</button></div>';
+  }
+  return h;
+}
+function summaryHTML(print){
+  let h='<h2 class="pt">Resumen de soluciones</h2><table><thead><tr><th>#</th><th>Solución</th><th>Quién y cuándo (propuesto)</th><th>Meta</th></tr></thead><tbody>'+NODES.map(function(n,i){
+    return '<tr><td class="n">'+(i+1)+'</td><td>'+esc(n.sol.t)+'</td><td>'+esc(n.quien)+', '+esc(n.plazo)+'</td><td>'+esc(n.res)+'</td></tr>';
+  }).join('')+'</tbody></table><p class="hint">Responsables, plazos y metas son propuestas del grupo para discutir con Kalea, no compromisos ya acordados.</p>';
+  h+='<h3>Datos a revisar en la presentación</h3><ul class="ojo">'+OJO.map(function(o){return '<li><b>'+esc(o[0])+'.</b> '+esc(o[1])+'</li>';}).join('')+'</ul>';
+  h+='<h3>Fuentes</h3><ul>'+FUENTES.map(function(f){return '<li><a href="'+esc(f[1])+'" target="_blank" rel="noopener noreferrer">'+esc(f[0])+'</a></li>';}).join('')+'</ul>';
+  return h;
+}
+function render(){
+  const v=$('#view');
+  v.innerHTML=tab==='rec'?nodeHTML(NODES[cur],cur,false):summaryHTML(false);
+  $('#tRec').setAttribute('aria-selected',String(tab==='rec'));
+  $('#tRes').setAttribute('aria-selected',String(tab==='res'));
+  $('#panel').scrollTop=0;
+  paint();
+}
+function go(i){cur=i;tab='rec';render();}
+
+/* mapa */
+const CW=168,CH=64;
+function clip(a,b){
+  const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;
+  const tx=Math.abs(ux)>1e-6?(CW/2+5)/Math.abs(ux):1e9,ty=Math.abs(uy)>1e-6?(CH/2+5)/Math.abs(uy):1e9;
+  return Math.min(tx,ty);
+}
+function buildMap(){
+  let s='<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#8B4A4C"/></marker><marker id="ahon" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0L10,5L0,10z" fill="#C4283A"/></marker></defs>';
+  s+=ZONES.map(function(z){return '<g><rect class="zone" style="--zc:'+z.c+'" x="'+z.x+'" y="36" width="188" height="390" rx="16"/><text class="zl" x="'+(z.x+14)+'" y="58">'+esc(z.n)+'</text></g>';}).join('');
+  s+='<g id="edges">'+EDGES.map(function(e,k){
+    const a=NODES[IDX[e[0]]],b=NODES[IDX[e[1]]],dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;
+    const sa=clip(a,b),sb=clip(a,b);
+    const sx=a.x+ux*sa,sy=a.y+uy*sa,ex=b.x-ux*sb,ey=b.y-uy*sb;
+    let d='M'+sx.toFixed(1)+','+sy.toFixed(1)+' L'+ex.toFixed(1)+','+ey.toFixed(1);
+    if(e[2]==='back'){const mx=(sx+ex)/2-uy*38,my=(sy+ey)/2+ux*38;d='M'+sx.toFixed(1)+','+sy.toFixed(1)+' Q'+mx.toFixed(1)+','+my.toFixed(1)+' '+ex.toFixed(1)+','+ey.toFixed(1);}
+    return '<path class="edge '+e[2]+'" data-k="'+k+'" d="'+d+'" '+(e[2]==='link'?'':'marker-end="url(#ah)"')+'/>';
+  }).join('')+'<path class="edge back" d="M760,80 C760,0 150,0 150,80" marker-end="url(#ah)"/><text class="el" x="455" y="14" text-anchor="middle">el ciclo vuelve a Compras: cada vuelta mejora la siguiente</text></g>';
+  s+='<g transform="translate(424,318)"><path class="edge" d="M0,10 L40,10" marker-end="url(#ah)"/><text class="el" x="50" y="14">flujo de una comanda</text><path class="edge back" d="M0,38 L40,38"/><text class="el" x="50" y="42">una queja vuelve a la cocina</text><path class="edge link" d="M0,66 L40,66"/><text class="el" x="50" y="70">temas de la misma cocina</text></g>';
+  s+=NODES.map(function(n,i){
+    return '<g class="card'+(n.dec?' dec':'')+'" data-i="'+i+'" tabindex="0" role="button" aria-label="Paso '+(i+1)+': '+esc(n.title)+'" transform="translate('+n.x+','+n.y+')"><rect x="'+(-CW/2)+'" y="'+(-CH/2)+'" width="'+CW+'" height="'+CH+'" rx="14"/><text class="t" x="0" y="2">'+esc(n.label)+'</text><circle cx="'+(-CW/2+4)+'" cy="'+(-CH/2+4)+'" r="13"/><text class="nb" x="'+(-CW/2+4)+'" y="'+(-CH/2+5)+'">'+(i+1)+'</text></g>';
+  }).join('');
+  $('#map').innerHTML=s;
+}
+function paint(){
+  document.body.setAttribute('data-f',filter);
+  document.querySelectorAll('.card').forEach(function(g){
+    const i=+g.getAttribute('data-i'),n=NODES[i];
+    g.classList.toggle('cur',tab==='rec'&&i===cur);
+    g.classList.toggle('dim',filter!=='all'&&!n.normas.some(function(x){return x[0]===filter;}));
+  });
+  document.querySelectorAll('#edges .edge[data-k]').forEach(function(p){
+    const e=EDGES[+p.getAttribute('data-k')];
+    const on=tab==='rec'&&e[0]===NODES[cur].id&&e[2]!=='link';
+    p.classList.toggle('on',on);
+    if(e[2]!=='link') p.setAttribute('marker-end',on?'url(#ahon)':'url(#ah)');
+  });
+  document.querySelectorAll('.norm').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-f')===filter));});
+}
+function buildNorms(){
+  $('#normbar').innerHTML=['9001','2674','45001','14001'].map(function(k){
+    const s=SYS[k];return '<button class="norm" data-f="'+k+'" style="--nc:'+s.c+'" aria-pressed="false"><b>'+esc(s.n)+'</b><span>'+esc(s.d)+'</span></button>';
+  }).join('');
+}
+function buildPrint(){
+  let h='<h1>Kalea: de la compra a la mesa, con cuatro normas</h1><p>'+['9001','2674','45001','14001'].map(function(k){return '<b>'+SYS[k].n+'</b>: '+SYS[k].d.toLowerCase();}).join('. ')+'.</p>';
+  h+=NODES.map(function(n,i){return '<div class="node">'+nodeHTML(n,i,true)+'</div>';}).join('');
+  h+=summaryHTML(true);
+  $('#printAll').innerHTML=h;
+}
+let tT=0;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tT);tT=setTimeout(function(){t.classList.remove('on');},2600);}
+function fallbackCopy(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy');}catch(e){}document.body.removeChild(a);return ok;}
+function copy(t){
+  const done=function(ok){toast(ok?'Columnas copiadas: pégalas en una fila de Excel o Google Sheets.':'No se pudo copiar. Selecciona los campos y copia a mano.');};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(function(){done(true);},function(){done(fallbackCopy(t));});}
+  else done(fallbackCopy(t));
+}
+
+document.addEventListener('click',function(ev){
+  const t=ev.target;
+  const card=t.closest('.card');if(card){go(+card.getAttribute('data-i'));return;}
+  const g=t.closest('[data-go]');if(g&&!g.disabled){go(+g.getAttribute('data-go'));return;}
+  const cp=t.closest('.cp');if(cp){const f=NODES[+cp.getAttribute('data-n')].sol.fmts[+cp.getAttribute('data-f')];copy(f.c.join('\t'));return;}
+  const nm=t.closest('.norm');if(nm){const f=nm.getAttribute('data-f');filter=(filter===f)?'all':f;paint();return;}
+});
+document.addEventListener('keydown',function(ev){
+  if((ev.key==='Enter'||ev.key===' ')&&ev.target.classList&&ev.target.classList.contains('card')){ev.preventDefault();go(+ev.target.getAttribute('data-i'));return;}
+  if(ev.altKey||ev.ctrlKey||ev.metaKey) return;
+  if(ev.key==='ArrowRight'&&tab==='rec'){go((cur+1)%NODES.length);}
+  if(ev.key==='ArrowLeft'&&tab==='rec'&&cur>0){go(cur-1);}
+});
+$('#tRec').addEventListener('click',function(){tab='rec';render();});
+$('#tRes').addEventListener('click',function(){tab='res';render();});
+$('#bPrint').addEventListener('click',function(){window.print();});
+
+buildNorms();buildMap();buildPrint();render();
+if(window.__KALEA_TEST) window.__k={NODES:NODES,EDGES:EDGES,go:go,state:function(){return {cur:cur,tab:tab,filter:filter};},setTab:function(t){tab=t;render();},setFilter:function(f){filter=f;paint();}};
+})();
+</script>
+</body>
+</html>
