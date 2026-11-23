@@ -135,10 +135,10 @@ a{color:var(--accent);font-weight:600;word-break:break-word}
 
 <script>
 const SYS={
- '9001':{n:'NTC ISO 9001',k:'s90',c:'var(--c90)',d:'Lo que Kalea ofrece al cliente y cómo lo demuestra'},
- '2674':{n:'Res. 2674 de 2013',k:'s26',c:'var(--c26)',d:'El piso legal que no puede incumplir'},
- '45001':{n:'NTC ISO 45001',k:'s45',c:'var(--c45)',d:'La protección de quienes trabajan'},
- '14001':{n:'NTC ISO 14001',k:'s14',c:'var(--c14)',d:'El efecto de la operación en el entorno'}
+ '9001':{n:'NTC ISO 9001',f:'NTC ISO 9001:2015',k:'s90',c:'var(--c90)',d:'Lo que Kalea ofrece al cliente y cómo lo demuestra'},
+ '2674':{n:'Res. 2674 de 2013',f:'Res. 2674 de 2013',k:'s26',c:'var(--c26)',d:'El piso legal que no puede incumplir'},
+ '45001':{n:'NTC ISO 45001',f:'NTC ISO 45001:2018',k:'s45',c:'var(--c45)',d:'La protección de quienes trabajan'},
+ '14001':{n:'NTC ISO 14001',f:'NTC ISO 14001:2015',k:'s14',c:'var(--c14)',d:'El efecto de la operación en el entorno'}
 };
 const ZONES=[
  {n:'Entrada',x:6,c:'#8A5A44'},{n:'Cocina',x:206,c:'#DA3443'},{n:'Salón',x:406,c:'#B07A00'},{n:'Atrás y gestión',x:606,c:'#1D7386'}
@@ -327,11 +327,11 @@ function paint(){
 }
 function buildNorms(){
   $('#normbar').innerHTML=['9001','2674','45001','14001'].map(function(k){
-    const s=SYS[k];return '<button class="norm" data-f="'+k+'" style="--nc:'+s.c+'" aria-pressed="false"><b>'+esc(s.n)+'</b><span>'+esc(s.d)+'</span></button>';
+    const s=SYS[k];return '<button class="norm" data-f="'+k+'" style="--nc:'+s.c+'" aria-pressed="false"><b>'+esc(s.f)+'</b><span>'+esc(s.d)+'</span></button>';
   }).join('');
 }
 function buildPrint(){
-  let h='<h1>Kalea: de la compra a la mesa, con cuatro normas</h1><p>'+['9001','2674','45001','14001'].map(function(k){return '<b>'+SYS[k].n+'</b>: '+SYS[k].d.toLowerCase();}).join('. ')+'.</p>';
+  let h='<h1>Kalea: de la compra a la mesa, con cuatro normas</h1><p>'+['9001','2674','45001','14001'].map(function(k){return '<b>'+SYS[k].f+'</b>: '+SYS[k].d.toLowerCase();}).join('. ')+'.</p>';
   h+=NODES.map(function(n,i){return '<div class="node">'+nodeHTML(n,i,true)+'</div>';}).join('');
   h+=summaryHTML(true);
   $('#printAll').innerHTML=h;
